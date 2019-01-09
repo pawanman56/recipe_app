@@ -33,7 +33,11 @@ flutter:
   uses-material-design: true
   assets:
     - assets/background.jpg
+    - assets/google-logo.png
   fonts:
     - family: Merriweather
       fonts:
         - asset: fonts/Merriweather-Regular.ttf
+    - family: Roboto-Medium
+      fonts:
+        - asset: fonts/Roboto-Regular.ttf
