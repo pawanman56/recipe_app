@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:recipe_app/model/recipe.dart';
 import 'package:recipe_app/utils/store.dart';
+import 'package:recipe_app/ui/widgets/recipe_card.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -33,7 +34,11 @@ class HomeScreenState extends State<HomeScreen> {
             child: ListView.builder(
               itemCount: recipesList.length,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(title: Text(recipesList[index].name),);
+                return new RecipeCard(
+                  recipe: recipesList[index],
+                  inFavorites: userFavorites.contains(recipesList[index].id),
+                  onFavoriteButtonPressed: _handleFavoritesListChanged,
+                );
               },
             ),
           )
