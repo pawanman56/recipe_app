@@ -27,22 +27,25 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     
-    Column _buildRecipes(List<Recipe> recipesList) {
-      return Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: recipesList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return new RecipeCard(
-                  recipe: recipesList[index],
-                  inFavorites: userFavorites.contains(recipesList[index].id),
-                  onFavoriteButtonPressed: _handleFavoritesListChanged,
-                );
-              },
-            ),
-          )
-        ],
+    Padding _buildRecipes(List<Recipe> recipesList) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: ListView.builder(
+                itemCount: recipesList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return new RecipeCard(
+                    recipe: recipesList[index],
+                    inFavorites: userFavorites.contains(recipesList[index].id),
+                    onFavoriteButtonPressed: _handleFavoritesListChanged,
+                  );
+                },
+              ),
+            )
+          ],
+        ),
       );
     }
 
@@ -54,7 +57,6 @@ class HomeScreenState extends State<HomeScreen> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(50.0),
           child: AppBar(
-            backgroundColor: Colors.white,
             elevation: 2.0,
             bottom: TabBar(
               labelColor: Theme.of(context).indicatorColor,

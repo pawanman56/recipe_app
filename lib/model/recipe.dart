@@ -23,4 +23,6 @@ class Recipe {
     this.preparation,
     this.imageUrl,
   });
+
+  String get getDurationString => prettyDuration(this.duration);
 }

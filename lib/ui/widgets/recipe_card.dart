@@ -21,9 +21,10 @@ class RecipeCard extends StatelessWidget {
         onPressed: () => onFavoriteButtonPressed(recipe.id),
         child: Icon(
           inFavorites == true ? Icons.favorite : Icons.favorite_border,
+          color: Theme.of(context).iconTheme.color,
         ),
         elevation: 2.0,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).buttonColor,
         shape: CircleBorder(),
       );
     }
@@ -34,12 +35,18 @@ class RecipeCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(recipe.name),
+            Text(
+              recipe.name,
+              style: Theme.of(context).textTheme.title,
+            ),
             SizedBox(height: 10.0,),
             Row(children: <Widget>[
               Icon(Icons.timer, size: 20.0,),
               SizedBox(width: 5.0,),
-              Text(recipe.duration.toString()),
+              Text(
+                recipe.getDurationString,
+                style: Theme.of(context).textTheme.caption,
+              ),
             ],),
           ],
         ),
