@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/model/recipe.dart';
 import 'package:recipe_app/utils/store.dart';
 import 'package:recipe_app/ui/widgets/recipe_card.dart';
+import 'package:recipe_app/model/state.dart';
+import 'package:recipe_app/state_widget.dart';
+import 'package:recipe_app/ui/screens/login.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,22 +14,60 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   
+  StateModel appState;
   List<Recipe> recipes = getRecipes();
   List<String> userFavorites = getFavoritesIds();
 
-  void _handleFavoritesListChanged(String recipeId) {
-    setState(() {
-      if (userFavorites.contains(recipeId)) {
-        userFavorites.remove(recipeId);
-      } else {
-        userFavorites.add(recipeId);
-      }
-    });
+  DefaultTabController _buildTabView({Widget body}) {
+    const double _iconSize = 20.0;
+
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(50.0),
+          child: AppBar(
+            elevation: 2.0,
+            bottom: TabBar(
+              labelColor: Theme.of(context).indicatorColor,
+              tabs: [
+                Tab(icon: Icon(Icons.restaurant, size: _iconSize)),
+                Tab(icon: Icon(Icons.local_drink, size: _iconSize)),
+                Tab(icon: Icon(Icons.favorite, size: _iconSize)),
+                Tab(icon: Icon(Icons.settings, size: _iconSize)),
+              ],
+            ),
+          ),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(5.0),
+          child: body,
+        ),
+      ),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    
+  Widget _buildContent() {
+    if (appState.isLoading) {
+      return _buildTabView(
+        body: _buildLoadingIndicator(),
+      );
+    } else if (!appState.isLoading && appState.user == null) {
+      return new LoginScreen();
+    } else {
+      return _buildTabView(
+        body: _buildTabsContent(),
+      );
+    }
+  }
+
+  Center _buildLoadingIndicator() {
+    return Center(
+      child: new CircularProgressIndicator(),
+    );
+  }
+
+  TabBarView _buildTabsContent() {
     Padding _buildRecipes(List<Recipe> recipesList) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -49,51 +90,29 @@ class HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    double _iconSize = 20.0;
-
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(50.0),
-          child: AppBar(
-            elevation: 2.0,
-            bottom: TabBar(
-              labelColor: Theme.of(context).indicatorColor,
-              tabs: [
-                Tab(icon: Icon(Icons.restaurant, size: _iconSize)),
-                Tab(icon: Icon(Icons.local_drink, size: _iconSize)),
-                Tab(icon: Icon(Icons.favorite, size: _iconSize)),
-                Tab(icon: Icon(Icons.settings, size: _iconSize)),
-              ],
-            ),
-          ),
-        ),
-        body: Padding(
-          padding: EdgeInsets.all(5.0),
-          child: TabBarView(
-            children: [
-              // Display recipes of type food
-              _buildRecipes(recipes
-                .where((recipe) => recipe.type == RecipeType.food)
-                .toList()
-              ),
-
-              // Display recipes of type drink
-              _buildRecipes(recipes
-                .where((recipe) => recipe.type == RecipeType.drink)
-                .toList()
-              ),
-
-              // Display favorite recipes
-              _buildRecipes(recipes
-                .where((recipe) => userFavorites.contains(recipe.id))
-                .toList()
-              ),
-            ],
-          ),
-        ),
-      ),
+    return TabBarView(
+      children: [
+        _buildRecipes(recipes.where((recipe) => recipe.type == RecipeType.food).toList()),
+        _buildRecipes(recipes.where((recipe) => recipe.type == RecipeType.drink).toList()),
+        _buildRecipes(recipes.where((recipe) => userFavorites.contains(recipe.id)).toList()),
+        Center(child: Icon(Icons.settings)),
+      ],
     );
+  }
+
+  void _handleFavoritesListChanged(String recipeId) {
+    setState(() {
+      if (userFavorites.contains(recipeId)) {
+        userFavorites.remove(recipeId);
+      } else {
+        userFavorites.add(recipeId);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    appState =  StateWidget.of(context).state;
+    return _buildContent();
   }
 }
