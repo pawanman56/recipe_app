@@ -1,8 +1,46 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+import 'package:recipe_app/model/recipe.dart';
+import 'package:recipe_app/utils/store.dart';
+
+class HomeScreen extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new HomeScreenState();
+}
+
+class HomeScreenState extends State<HomeScreen> {
+  
+  List<Recipe> recipes = getRecipes();
+  List<String> userFavorites = getFavoritesIds();
+
+  void _handleFavoritesListChanged(String recipeId) {
+    setState(() {
+      if (userFavorites.contains(recipeId)) {
+        userFavorites.remove(recipeId);
+      } else {
+        userFavorites.add(recipeId);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    
+    Column _buildRecipes(List<Recipe> recipesList) {
+      return Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              itemCount: recipesList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(title: Text(recipesList[index].name),);
+              },
+            ),
+          )
+        ],
+      );
+    }
+
     double _iconSize = 20.0;
 
     return DefaultTabController(
@@ -28,10 +66,23 @@ class HomeScreen extends StatelessWidget {
           padding: EdgeInsets.all(5.0),
           child: TabBarView(
             children: [
-              Center(child: Icon(Icons.restaurant)),
-              Center(child: Icon(Icons.local_drink)),
-              Center(child: Icon(Icons.favorite)),
-              Center(child: Icon(Icons.settings)),
+              // Display recipes of type food
+              _buildRecipes(recipes
+                .where((recipe) => recipe.type == RecipeType.food)
+                .toList()
+              ),
+
+              // Display recipes of type drink
+              _buildRecipes(recipes
+                .where((recipe) => recipe.type == RecipeType.drink)
+                .toList()
+              ),
+
+              // Display favorite recipes
+              _buildRecipes(recipes
+                .where((recipe) => userFavorites.contains(recipe.id))
+                .toList()
+              ),
             ],
           ),
         ),
