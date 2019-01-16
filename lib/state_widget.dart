@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:recipe_app/model/state.dart';
 import 'package:recipe_app/utils/auth.dart';
@@ -52,16 +53,31 @@ class _StateWidgetState extends State<StateWidget> {
     }
   }
 
+  Future<List<String>> getFavorites() async {
+    DocumentSnapshot querySnapshot = await Firestore.instance
+    .collection('users')
+    .document(state.user.uid)
+    .get();
+
+    if (querySnapshot.data.containsKey('favorites') && querySnapshot.data['favorites'] is List) {
+      return List<String>.from(querySnapshot.data['favorites']);
+    }
+
+    return [];
+  }
+
   Future<Null> signInWithGoogle() async {
     if (googleAccount == null) {
       googleAccount = await googleSignIn.signIn();
     }
 
     FirebaseUser firebaseUser = await signIntoFirebase(googleAccount);
+    state.user = firebaseUser;
+    List<String> favorites = await getFavorites();
 
     setState(() {
       state.isLoading = false;
-      state.user = firebaseUser;
+      state.favorites = favorites;
     });
   }
 
