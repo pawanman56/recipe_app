@@ -38,6 +38,7 @@ class _StateWidgetState extends State<StateWidget> {
       state = widget.state;
     } else {
       state = new StateModel(isLoading: true);
+      initUser();
     }
   }
 
@@ -55,9 +56,9 @@ class _StateWidgetState extends State<StateWidget> {
 
   Future<List<String>> getFavorites() async {
     DocumentSnapshot querySnapshot = await Firestore.instance
-    .collection('users')
-    .document(state.user.uid)
-    .get();
+      .collection('users')
+      .document(state.user.uid)
+      .get();
 
     if (querySnapshot.data.containsKey('favorites') && querySnapshot.data['favorites'] is List) {
       return List<String>.from(querySnapshot.data['favorites']);
