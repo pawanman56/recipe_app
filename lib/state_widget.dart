@@ -82,6 +82,17 @@ class _StateWidgetState extends State<StateWidget> {
     });
   }
 
+  Future<Null> signOutOfGoogle() async {
+    await FirebaseAuth.instance.signOut();
+    await googleSignIn.signOut();
+    googleAccount = null;
+    state.user = null;
+
+    setState(() {
+      state = StateModel(user: null);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new _StateDataWidget(

@@ -7,6 +7,7 @@ import 'package:recipe_app/state_widget.dart';
 import 'package:recipe_app/ui/screens/login.dart';
 import 'package:recipe_app/ui/widgets/recipe_card.dart';
 import 'package:recipe_app/utils/store.dart';
+import 'package:recipe_app/ui/widgets/settings_button.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -66,6 +67,22 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Column _buildSettings() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SettingsButton(
+          icon: Icons.exit_to_app,
+          title: 'Log Out',
+          caption: appState.user.displayName,
+          onPressed: () async {
+            await StateWidget.of(context).signOutOfGoogle();
+          },
+        ),
+      ],
+    );
+  }
+
   TabBarView _buildTabsContent() {
     Padding _buildRecipes({RecipeType recipeType, List<String> ids}) {
       CollectionReference collectionReference = Firestore.instance.collection('recipes');
@@ -113,7 +130,7 @@ class HomeScreenState extends State<HomeScreen> {
         _buildRecipes(recipeType: RecipeType.food),
         _buildRecipes(recipeType: RecipeType.drink),
         _buildRecipes(ids: appState.favorites),
-        Center(child: Icon(Icons.settings)),
+        _buildSettings(),
       ],
     );
   }
