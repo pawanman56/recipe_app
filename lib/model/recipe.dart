@@ -33,6 +33,6 @@ class Recipe {
     duration: Duration(minutes: data['duration']),
     ingredients: new List<String>.from(data['ingredients']),
     preparation: new List<String>.from(data['preparation']),
-    imageUrl: data['image'],
+    imageUrl: data['imageUrl'],
   );
 }
