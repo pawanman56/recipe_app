@@ -60,8 +60,6 @@ class _StateWidgetState extends State<StateWidget> {
       .document(state.user.uid)
       .get();
 
-    print(querySnapshot);
-
     if (querySnapshot.exists && querySnapshot.data.containsKey('favorites') && querySnapshot.data['favorites'] is List) {
       return List<String>.from(querySnapshot.data['favorites']);
     }
